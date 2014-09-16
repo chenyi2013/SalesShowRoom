@@ -1,11 +1,17 @@
 package com.puji.salesshowroom;
 
+import it.sephiroth.android.library.widget.AbsHListView;
+import it.sephiroth.android.library.widget.AbsHListView.OnScrollListener;
+import it.sephiroth.android.library.widget.AdapterView;
+import it.sephiroth.android.library.widget.AdapterView.OnItemClickListener;
+import it.sephiroth.android.library.widget.AdapterView.OnItemSelectedListener;
 import it.sephiroth.android.library.widget.HListView;
 
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,8 +19,10 @@ import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
@@ -22,26 +30,66 @@ import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
 import com.puji.bean.Building;
+import com.puji.util.DisplayUtils;
 
-public class MainActivity extends Activity {
+/**
+ * 
+ * @author Kevin
+ * 
+ */
+public class MainActivity extends Activity implements OnItemSelectedListener,
+		OnScrollListener, OnItemClickListener {
 
+	/**
+	 * 标识item是一个header
+	 */
 	private static final int HEADER_ITEM = 0;
+
+	/**
+	 * 标识item
+	 */
 	private static final int CONTENT_ITEM = 1;
 
-	private static final int DURATION = 5000;
+	/**
+	 * 轮播到下一个城市的时间间隔
+	 */
+	private static final int DURATION = 15000;
+
+	/**
+	 * 标识发送的消息类别
+	 */
 	private static final int SUCCESS = 1;
 	private static final int STOP = 2;
 
+	private static final String DETAIL_INFO = "detail_info";
+
+	/**
+	 * 当前被轮播到的header项所对应的位置
+	 */
+	private int mSelection = 0;
+
+	/**
+	 * 轮播时用到的计数器
+	 */
 	int count = 0;
 
 	private CustomAdapter mAdapter;
 
+	/**
+	 * 水平方向的ListView
+	 */
 	private HListView mHListView;
 	private ArrayList<Building> mData;
+
 	private int layoutHeight = 0;
 	private int mainLayoutHeight = 0;
 
+	/**
+	 * 线性图
+	 */
 	private LineGraphView mGraphView;
+
+	private DisplayUtils mDisplayUtils;
 
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
@@ -57,7 +105,18 @@ public class MainActivity extends Activity {
 					count = 0;
 				}
 
-				mHListView.setSelection(indexer.getPositionForSection(count++));
+				int position = indexer.getPositionForSection(count++);
+
+				if (position != 0) {
+					mHListView
+							.smoothScrollToPositionFromLeft(position, 0, 3000);
+				} else {
+					mHListView.smoothScrollToPositionFromLeft(position, 0, 0);
+				}
+
+				mSelection = position;
+				mAdapter.notifyDataSetChanged();
+
 				mHandler.sendEmptyMessageDelayed(SUCCESS, DURATION);
 
 				break;
@@ -77,25 +136,11 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		mDisplayUtils = new DisplayUtils(this);
+
 		initData();
 		initView();
-	}
-
-	/**
-	 * 测量View的高度
-	 * 
-	 * @param view
-	 * @return
-	 */
-	private int measureLayoutHeight(View view) {
-
-		int w = View.MeasureSpec.makeMeasureSpec(0,
-				View.MeasureSpec.UNSPECIFIED);
-		int h = View.MeasureSpec.makeMeasureSpec(0,
-				View.MeasureSpec.UNSPECIFIED);
-		view.measure(w, h);
-		return view.getMeasuredHeight();
-
 	}
 
 	/**
@@ -147,12 +192,19 @@ public class MainActivity extends Activity {
 	 */
 	public void initView() {
 		mHListView = (HListView) findViewById(R.id.horizontal_list_view);
+		mHListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		mHListView.setSelected(true);
+		mHListView.setOnItemSelectedListener(this);
+		mHListView.setOnScrollListener(this);
+		mHListView.setOnItemClickListener(this);
 		mHListView.setAdapter(mAdapter = new CustomAdapter());
-		mHandler.sendEmptyMessageDelayed(SUCCESS, DURATION);
+		mHandler.sendEmptyMessageDelayed(SUCCESS, 0);
 
-		layoutHeight = measureLayoutHeight(getLayoutInflater().inflate(
-				R.layout.list_view_item, null).findViewById(R.id.layout));
-		mainLayoutHeight = (getWindowManager().getDefaultDisplay().getHeight() - measureLayoutHeight(findViewById(R.id.top_layout))) * 2 / 3;
+		layoutHeight = mDisplayUtils.measureViewHeight(getLayoutInflater()
+				.inflate(R.layout.list_view_item, null).findViewById(
+						R.id.layout));
+		mainLayoutHeight = (mDisplayUtils.getDisplayHeight() - mDisplayUtils
+				.measureViewHeight(findViewById(R.id.top_layout))) * 2 / 3;
 
 		initTable1();
 		initTable2();
@@ -243,6 +295,7 @@ public class MainActivity extends Activity {
 
 		TextView cityNameCHTv;
 		TextView cityNameENTv;
+		ImageView cityIcon;
 
 	}
 
@@ -256,13 +309,13 @@ public class MainActivity extends Activity {
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
-			return null;
+
+			return mData.get(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
+
 			return position;
 		}
 
@@ -279,7 +332,7 @@ public class MainActivity extends Activity {
 
 		@Override
 		public int getViewTypeCount() {
-			// TODO Auto-generated method stub
+
 			return 2;
 		}
 
@@ -300,6 +353,8 @@ public class MainActivity extends Activity {
 						.findViewById(R.id.city_name_ch);
 				headerViewHolder.cityNameENTv = (TextView) convertView
 						.findViewById(R.id.city_name_en);
+				headerViewHolder.cityIcon = (ImageView) convertView
+						.findViewById(R.id.city_icon);
 
 				convertView.setTag(headerViewHolder);
 
@@ -335,6 +390,13 @@ public class MainActivity extends Activity {
 						.getBuildlingName());
 				headerViewHolder.cityNameENTv.setText(mData.get(position)
 						.getOpenTime());
+				if (mSelection == position) {
+					headerViewHolder.cityIcon
+							.setImageResource(R.drawable.ico04);
+				} else {
+					headerViewHolder.cityIcon
+							.setImageResource(R.drawable.ico05);
+				}
 
 			} else if (getItemViewType(position) == CONTENT_ITEM) {
 
@@ -382,7 +444,6 @@ public class MainActivity extends Activity {
 
 		@Override
 		public Object[] getSections() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
@@ -424,6 +485,42 @@ public class MainActivity extends Activity {
 
 			return 0;
 		}
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position,
+			long id) {
+
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		Building building = mData.get(position);
+		if (building.isHeader()) {
+
+		} else {
+			Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+			intent.putExtra(DETAIL_INFO, building);
+			startActivity(intent);
+		}
+
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsHListView view, int scrollState) {
+
+	}
+
+	@Override
+	public void onScroll(AbsHListView view, int firstVisibleItem,
+			int visibleItemCount, int totalItemCount) {
+
 	}
 
 }

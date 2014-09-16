@@ -23,8 +23,9 @@
         android:textColor="#ffffff" />
 
     <ImageView
+        android:id="@+id/city_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ico04" />
+        android:src="@drawable/ico05" />
 
 </LinearLayout>

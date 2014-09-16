@@ -1,6 +1,13 @@
 package com.puji.bean;
 
-public class Building {
+import java.io.Serializable;
+
+public class Building implements Serializable {
+
+	/**
+	 * –Ú¡–∫≈
+	 */
+	private static final long serialVersionUID = 7235029398606818404L;
 
 	private String buildlingName;
 	private String openTime;
