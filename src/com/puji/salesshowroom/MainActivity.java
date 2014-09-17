@@ -216,29 +216,37 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 	 */
 	private void initTable1() {
 		LinearLayout mLayout = (LinearLayout) findViewById(R.id.table1);
-		mGraphView = new LineGraphView(this, "本年销售变化");
-		mGraphView
-				.setHorizontalLabels(new String[] { "1", "2", "3", "4", "5" });
-		mGraphView.setVerticalLabels(new String[] { "5", "", "4", "", "3", "",
-				"2", "", "1" });
-
+		mGraphView = new LineGraphView(this, "本月销售变化");
+		String[] horizontalLabels = new String[31];
+		for (int i = 0; i < 31; i++) {
+			if ((i + 1) % 5 == 0) {
+				horizontalLabels[i] = i + 1 + "日";
+			} else {
+				horizontalLabels[i] = "";
+			}
+		}
+		mGraphView.setHorizontalLabels(horizontalLabels);
 		mGraphView.getGraphViewStyle().setGridColor(Color.WHITE);
 		mGraphView.getGraphViewStyle().setHorizontalLabelsColor(Color.WHITE);
 		mGraphView.getGraphViewStyle().setVerticalLabelsColor(Color.WHITE);
-		mGraphView.getGraphViewStyle().setTextSize(28);
-		mGraphView.getGraphViewStyle().setNumHorizontalLabels(5);
-		mGraphView.getGraphViewStyle().setNumVerticalLabels(4);
+		mGraphView.getGraphViewStyle().setTextSize(12);
 		mGraphView.getGraphViewStyle().setVerticalLabelsWidth(30);
+		// mGraphView.getGraphViewStyle().setNumVerticalLabels(5);
+		mGraphView.getGraphViewStyle().setNumHorizontalLabels(31);
 		mGraphView.setBackgroundColor(Color.parseColor("#66436EEE"));
 		mGraphView.setDrawBackground(true);
 		// mGraphView.setDrawDataPoints(true);
+		mGraphView.getGraphViewStyle().setLegendWidth(1);
 
-		GraphViewData[] data = new GraphViewData[5];
-		data[0] = new GraphViewData(0, 2);
-		data[1] = new GraphViewData(1, 5);
-		data[2] = new GraphViewData(2, 3);
-		data[3] = new GraphViewData(3, 1);
-		data[4] = new GraphViewData(4, 4);
+		GraphViewData[] data = new GraphViewData[31];
+		data[0] = new GraphViewData(0, 0);
+		data[1] = new GraphViewData(1, 40);
+		data[2] = new GraphViewData(2, 60);
+		data[3] = new GraphViewData(3, 60);
+		data[4] = new GraphViewData(4, 62);
+		for (int i = 5; i < 31; i++) {
+			data[i] = new GraphViewData(i, i * 2);
+		}
 		mGraphView.addSeries(new GraphViewSeries(data));
 		mLayout.addView(mGraphView);
 	}
@@ -249,31 +257,37 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 	private void initTable2() {
 
 		LinearLayout mLayout2 = (LinearLayout) findViewById(R.id.table2);
+		String[] horizontalLabels = new String[12];
+		for (int i = 0; i < 12; i++) {
 
-		mGraphView = new LineGraphView(this, "本月销售变化");
-		mGraphView
-				.setHorizontalLabels(new String[] { "1", "2", "3", "4", "5" });
-		mGraphView.setVerticalLabels(new String[] { "5", "", "4", "", "3", "",
-				"2", "", "1" });
+			horizontalLabels[i] = i + 1 + "月";
+
+		}
+		mGraphView = new LineGraphView(this, "本年销售变化");
+		mGraphView.setHorizontalLabels(horizontalLabels);
+		// mGraphView.setVerticalLabels(new String[] { "5", "", "4", "", "3",
+		// "",
+		// "2", "", "1" });
 
 		mGraphView.getGraphViewStyle().setGridColor(Color.WHITE);
 		mGraphView.getGraphViewStyle().setHorizontalLabelsColor(Color.WHITE);
 		mGraphView.getGraphViewStyle().setVerticalLabelsColor(Color.WHITE);
-		mGraphView.getGraphViewStyle().setTextSize(28);
-		mGraphView.getGraphViewStyle().setNumHorizontalLabels(5);
-		mGraphView.getGraphViewStyle().setNumVerticalLabels(4);
+		mGraphView.getGraphViewStyle().setTextSize(12);
 		mGraphView.getGraphViewStyle().setVerticalLabelsWidth(30);
 		mGraphView.setBackgroundColor(Color.parseColor("#66436EEE"));
 		mGraphView.setDrawBackground(true);
 		mGraphView.getGraphViewStyle().setLegendSpacing(10);
 		// mGraphView.setDrawDataPoints(true);
 
-		GraphViewData[] data2 = new GraphViewData[5];
+		GraphViewData[] data2 = new GraphViewData[12];
 		data2[0] = new GraphViewData(0, 2);
 		data2[1] = new GraphViewData(1, 5);
 		data2[2] = new GraphViewData(2, 3);
 		data2[3] = new GraphViewData(3, 1);
 		data2[4] = new GraphViewData(4, 4);
+		for (int i = 5; i < 12; i++) {
+			data2[i] = new GraphViewData(i, i * 2);
+		}
 		mGraphView.addSeries(new GraphViewSeries(data2));
 		mLayout2.addView(mGraphView);
 

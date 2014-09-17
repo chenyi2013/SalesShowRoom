@@ -50,9 +50,9 @@ public class CustomCircleView extends View {
 	private int yesterdayCountTitleColor = Color.RED;
 	private int yesterdayCountColor = Color.BLUE;
 
-	private int totalRingColor = Color.RED;
-	private int selledRingColor =  Color.parseColor("#CDAD00");
-	private int yesterdayRingColor = Color.YELLOW;
+	private int totalRingColor = Color.parseColor("#8C8C8C");
+	private int selledRingColor =  Color.parseColor("#FB6F24");
+	private int yesterdayRingColor = Color.RED;
 
 	private int lineColor = Color.WHITE;
 
