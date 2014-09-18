@@ -105,6 +105,7 @@ public class CustomCircleView extends View {
 
 	public void setSelledCount(int selledCount) {
 		this.selledCount = selledCount;
+		invalidate();
 	}
 
 	public int getTotalCount() {
@@ -113,6 +114,7 @@ public class CustomCircleView extends View {
 
 	public void setTotalCount(int totalCount) {
 		this.totalCount = totalCount;
+		invalidate();
 	}
 
 	public int getYesterdayCount() {

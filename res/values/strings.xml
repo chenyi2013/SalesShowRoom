@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="sell_prograss">销售总进度</string>
     <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_test">TestActivity</string>
 
 </resources>

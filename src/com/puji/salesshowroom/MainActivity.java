@@ -8,6 +8,7 @@ import it.sephiroth.android.library.widget.AdapterView.OnItemSelectedListener;
 import it.sephiroth.android.library.widget.HListView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -16,6 +17,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -26,11 +28,21 @@ import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response.Listener;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
 import com.puji.bean.Building;
+import com.puji.bean.House;
+import com.puji.bean.PieChart;
+import com.puji.config.Config;
 import com.puji.util.DisplayUtils;
+import com.puji.util.FormatDataUtil;
+import com.puji.util.JsonUtils;
+import com.puji.view.CustomCircleView;
 
 /**
  * 
@@ -79,7 +91,9 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 	 * 水平方向的ListView
 	 */
 	private HListView mHListView;
-	private ArrayList<Building> mData;
+	private CustomCircleView pieChartView;
+	private ArrayList<House> mData;
+	private HashMap<String, PieChart> pieHashMap;
 
 	private int layoutHeight = 0;
 	private int mainLayoutHeight = 0;
@@ -115,6 +129,10 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 				}
 
 				mSelection = position;
+				pieChartView.setTotalCount(pieHashMap.get(
+						mData.get(mSelection).getCityName()).getTotalNum());
+				pieChartView.setSelledCount(pieHashMap.get(
+						mData.get(mSelection).getCityName()).getSalesNum());
 				mAdapter.notifyDataSetChanged();
 
 				mHandler.sendEmptyMessageDelayed(SUCCESS, DURATION);
@@ -139,66 +157,46 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 
 		mDisplayUtils = new DisplayUtils(this);
 
-		initData();
+		RequestQueue mQueue = Volley.newRequestQueue(this);
+		StringRequest request = new StringRequest(Config.CITY_SALES_URL,
+				new Listener<String>() {
+
+					@Override
+					public void onResponse(String json) {
+
+						Log.i("kevin", "start");
+
+						FormatDataUtil dataUtil = new FormatDataUtil(
+								JsonUtils.getHouses(json));
+						mData = dataUtil.getHouses();
+						pieHashMap = dataUtil.getPieChartData();
+
+						Log.i("kevin", mData.toString());
+
+						mHListView.setOnItemClickListener(MainActivity.this);
+						mHListView.setAdapter(mAdapter = new CustomAdapter());
+
+						mHandler.sendEmptyMessageDelayed(SUCCESS, 0);
+					}
+				}, null);
+		mQueue.add(request);
+		mQueue.start();
+
 		initView();
-	}
-
-	/**
-	 * 初始化数据
-	 */
-	public void initData() {
-
-		mData = new ArrayList<>();
-		mData.add(new Building("北京", "beijing", 0, 0, 0, true));
-		mData.add(new Building("蔷薇国际(二期)", "2014-04", 600, 450, 54, false));
-		mData.add(new Building("紫藤庄园", "2014-06", 890, 123, 43, false));
-		mData.add(new Building("玫瑰庄园", "2013-12", 877, 876, 54, false));
-		mData.add(new Building("景湖城", "2013-11", 8776, 543, 134, false));
-		mData.add(new Building("蔷薇国际(一期商业)", "2010-14", 987, 432, 24, false));
-		mData.add(new Building("紫藤庄园(一期住宅)", "2014-01", 787, 343, 98, false));
-
-		mData.add(new Building("贵州", "guiZhou", 0, 0, 0, true));
-		mData.add(new Building("玫瑰庄园(一期商业)", "2014-02", 534, 432, 134, false));
-		mData.add(new Building("蔷薇国际", "2013-07", 6534, 5432, 76, false));
-		mData.add(new Building("景湖城", "2012-11", 743, 653, 54, false));
-
-		mData.add(new Building("上海", "shanghai", 0, 0, 0, true));
-		mData.add(new Building("景湖城(一期商业)", "2014-9", 789, 43, 3, false));
-		mData.add(new Building("蔷薇国际", "2013-12", 54723, 54346, 4, false));
-		mData.add(new Building("紫藤庄园", "2014-3", 54387, 5454, 32, false));
-
-		mData.add(new Building("天津", "TianJing", 0, 0, 0, true));
-		mData.add(new Building("蔷薇国际(二期)", "2014-04", 600, 450, 54, false));
-		mData.add(new Building("紫藤庄园", "2014-06", 890, 123, 43, false));
-		mData.add(new Building("玫瑰庄园", "2013-12", 877, 876, 54, false));
-		mData.add(new Building("景湖城", "2013-11", 8776, 543, 134, false));
-		mData.add(new Building("蔷薇国际(一期商业)", "2010-14", 987, 432, 24, false));
-		mData.add(new Building("紫藤庄园(一期住宅)", "2014-01", 787, 343, 98, false));
-
-		mData.add(new Building("广东", "GuangDong", 0, 0, 0, true));
-		mData.add(new Building("玫瑰庄园(一期商业)", "2014-02", 534, 432, 134, false));
-		mData.add(new Building("蔷薇国际", "2013-07", 6534, 5432, 76, false));
-		mData.add(new Building("景湖城", "2012-11", 743, 653, 54, false));
-
-		mData.add(new Building("四川", "siChuan", 0, 0, 0, true));
-		mData.add(new Building("景湖城(一期商业)", "2014-9", 789, 43, 3, false));
-		mData.add(new Building("蔷薇国际", "2013-12", 54723, 54346, 4, false));
-		mData.add(new Building("紫藤庄园", "2014-3", 54387, 5454, 32, false));
-
 	}
 
 	/**
 	 * 初始化视图
 	 */
 	public void initView() {
+
+		pieChartView = (CustomCircleView) findViewById(R.id.pie_chart);
+
 		mHListView = (HListView) findViewById(R.id.horizontal_list_view);
 		mHListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		mHListView.setSelected(true);
 		mHListView.setOnItemSelectedListener(this);
 		mHListView.setOnScrollListener(this);
-		mHListView.setOnItemClickListener(this);
-		mHListView.setAdapter(mAdapter = new CustomAdapter());
-		mHandler.sendEmptyMessageDelayed(SUCCESS, 0);
 
 		layoutHeight = mDisplayUtils.measureViewHeight(getLayoutInflater()
 				.inflate(R.layout.list_view_item, null).findViewById(
@@ -265,9 +263,6 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 		}
 		mGraphView = new LineGraphView(this, "本年销售变化");
 		mGraphView.setHorizontalLabels(horizontalLabels);
-		// mGraphView.setVerticalLabels(new String[] { "5", "", "4", "", "3",
-		// "",
-		// "2", "", "1" });
 
 		mGraphView.getGraphViewStyle().setGridColor(Color.WHITE);
 		mGraphView.getGraphViewStyle().setHorizontalLabelsColor(Color.WHITE);
@@ -277,7 +272,6 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 		mGraphView.setBackgroundColor(Color.parseColor("#66436EEE"));
 		mGraphView.setDrawBackground(true);
 		mGraphView.getGraphViewStyle().setLegendSpacing(10);
-		// mGraphView.setDrawDataPoints(true);
 
 		GraphViewData[] data2 = new GraphViewData[12];
 		data2[0] = new GraphViewData(0, 2);
@@ -401,9 +395,9 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 
 				headerViewHolder = (HeaderViewHolder) convertView.getTag();
 				headerViewHolder.cityNameCHTv.setText(mData.get(position)
-						.getBuildlingName());
+						.getCityName());
 				headerViewHolder.cityNameENTv.setText(mData.get(position)
-						.getOpenTime());
+						.getPinYin());
 				if (mSelection == position) {
 					headerViewHolder.cityIcon
 							.setImageResource(R.drawable.ico04);
@@ -414,14 +408,10 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 
 			} else if (getItemViewType(position) == CONTENT_ITEM) {
 
-				Building building = mData.get(position);
+				House building = mData.get(position);
 
 				int height = layoutHeight;
-				if (building.getTotalCount() != 0) {
-					height = (int) (mainLayoutHeight * (building
-							.getSelledCount() / (float) building
-							.getTotalCount()));
-				}
+				height = (int) (mainLayoutHeight * building.getRatio() / 100.0);
 
 				height = height > layoutHeight ? height : layoutHeight;
 
@@ -433,23 +423,17 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 
 				itemViewHolder.layout.setLayoutParams(layoutParams);
 
-				itemViewHolder.buildingNameTv.setText(building
-						.getBuildlingName());
-				itemViewHolder.openTimeTv.setText(building.getOpenTime());
+				itemViewHolder.buildingNameTv.setText(building.getName());
+				itemViewHolder.openTimeTv.setText(building.getKpDate());
 
-				if (building.getTotalCount() != 0) {
+				itemViewHolder.percentTv.setText(building.getRatio() + "%");
 
-					float percent = (int) ((building.getSelledCount() / (building
-							.getTotalCount() * 1.0)) * 100);
-					itemViewHolder.percentTv.setText(percent + "%");
-				}
-
-				itemViewHolder.selledCountTv.setText(building.getSelledCount()
+				itemViewHolder.selledCountTv.setText(building.getSalesNum()
 						+ "");
-				itemViewHolder.totalCountTv.setText(building.getTotalCount()
+				itemViewHolder.totalCountTv
+						.setText(building.getTotalNum() + "");
+				itemViewHolder.yesterdayCountTv.setText(building.getTodaySale()
 						+ "");
-				itemViewHolder.yesterdayCountTv.setText(building
-						.getYesterdaySelledCount() + "");
 
 			}
 
@@ -515,12 +499,12 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-		Building building = mData.get(position);
+		House building = mData.get(position);
 		if (building.isHeader()) {
 
 		} else {
 			Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-			intent.putExtra(DETAIL_INFO, building);
+			// intent.putExtra(DETAIL_INFO, building);
 			startActivity(intent);
 		}
 
