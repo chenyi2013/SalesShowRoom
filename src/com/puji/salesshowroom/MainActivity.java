@@ -14,6 +14,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,10 +33,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.LineGraphView;
-import com.puji.bean.Building;
 import com.puji.bean.House;
 import com.puji.bean.PieChart;
 import com.puji.config.Config;
@@ -73,7 +74,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 	private static final int SUCCESS = 1;
 	private static final int STOP = 2;
 
-	private static final String DETAIL_INFO = "detail_info";
+	public static final String DETAIL_INFO = "detail_info";
 
 	/**
 	 * 当前被轮播到的header项所对应的位置
@@ -94,6 +95,8 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 	private CustomCircleView pieChartView;
 	private ArrayList<House> mData;
 	private HashMap<String, PieChart> pieHashMap;
+	private HashMap<String, ArrayList<Integer>> monthTableData;
+	private HashMap<String, ArrayList<Integer>> yearTableData;
 
 	private int layoutHeight = 0;
 	private int mainLayoutHeight = 0;
@@ -101,9 +104,11 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 	/**
 	 * 线性图
 	 */
-	private LineGraphView mGraphView;
-
+	private LineGraphView mMonthGraphView;
+	private LineGraphView mYearGraphView;
 	private DisplayUtils mDisplayUtils;
+	private LinearLayout mMonthTableLayout;
+	private LinearLayout mYearTableLayout;
 
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
@@ -129,10 +134,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 				}
 
 				mSelection = position;
-				pieChartView.setTotalCount(pieHashMap.get(
-						mData.get(mSelection).getCityName()).getTotalNum());
-				pieChartView.setSelledCount(pieHashMap.get(
-						mData.get(mSelection).getCityName()).getSalesNum());
+				updataGraphViewsData();
 				mAdapter.notifyDataSetChanged();
 
 				mHandler.sendEmptyMessageDelayed(SUCCESS, DURATION);
@@ -163,16 +165,12 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 
 					@Override
 					public void onResponse(String json) {
-
-						Log.i("kevin", "start");
-
 						FormatDataUtil dataUtil = new FormatDataUtil(
 								JsonUtils.getHouses(json));
 						mData = dataUtil.getHouses();
 						pieHashMap = dataUtil.getPieChartData();
-
-						Log.i("kevin", mData.toString());
-
+						monthTableData = dataUtil.getMonthTableData();
+						yearTableData = dataUtil.getYearTableData();
 						mHListView.setOnItemClickListener(MainActivity.this);
 						mHListView.setAdapter(mAdapter = new CustomAdapter());
 
@@ -188,6 +186,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 	/**
 	 * 初始化视图
 	 */
+	@SuppressLint("InflateParams")
 	public void initView() {
 
 		pieChartView = (CustomCircleView) findViewById(R.id.pie_chart);
@@ -204,86 +203,88 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 		mainLayoutHeight = (mDisplayUtils.getDisplayHeight() - mDisplayUtils
 				.measureViewHeight(findViewById(R.id.top_layout))) * 2 / 3;
 
-		initTable1();
-		initTable2();
+		initMonthGraphView();
+		initYearGraphView();
 
 	}
 
-	/**
-	 * 初始化表格1
-	 */
-	private void initTable1() {
-		LinearLayout mLayout = (LinearLayout) findViewById(R.id.table1);
-		mGraphView = new LineGraphView(this, "本月销售变化");
-		String[] horizontalLabels = new String[31];
-		for (int i = 0; i < 31; i++) {
-			if ((i + 1) % 5 == 0) {
-				horizontalLabels[i] = i + 1 + "日";
-			} else {
-				horizontalLabels[i] = "";
-			}
-		}
-		mGraphView.setHorizontalLabels(horizontalLabels);
-		mGraphView.getGraphViewStyle().setGridColor(Color.WHITE);
-		mGraphView.getGraphViewStyle().setHorizontalLabelsColor(Color.WHITE);
-		mGraphView.getGraphViewStyle().setVerticalLabelsColor(Color.WHITE);
-		mGraphView.getGraphViewStyle().setTextSize(12);
-		mGraphView.getGraphViewStyle().setVerticalLabelsWidth(30);
-		// mGraphView.getGraphViewStyle().setNumVerticalLabels(5);
-		mGraphView.getGraphViewStyle().setNumHorizontalLabels(31);
-		mGraphView.setBackgroundColor(Color.parseColor("#66436EEE"));
-		mGraphView.setDrawBackground(true);
-		// mGraphView.setDrawDataPoints(true);
-		mGraphView.getGraphViewStyle().setLegendWidth(1);
+	private void initMonthGraphView() {
+		mMonthTableLayout = (LinearLayout) findViewById(R.id.table1);
+		mMonthGraphView = new LineGraphView(this, "本月销售变化");
+		String[] horizontalLabels = new String[7];
+		for (int i = 0; i < 7; i++) {
 
-		GraphViewData[] data = new GraphViewData[31];
-		data[0] = new GraphViewData(0, 0);
-		data[1] = new GraphViewData(1, 40);
-		data[2] = new GraphViewData(2, 60);
-		data[3] = new GraphViewData(3, 60);
-		data[4] = new GraphViewData(4, 62);
-		for (int i = 5; i < 31; i++) {
-			data[i] = new GraphViewData(i, i * 2);
+			horizontalLabels[i] = i * 5 + "日";
+
 		}
-		mGraphView.addSeries(new GraphViewSeries(data));
-		mLayout.addView(mGraphView);
+		mMonthGraphView.setHorizontalLabels(horizontalLabels);
+		mMonthGraphView.getGraphViewStyle().setGridColor(Color.WHITE);
+		mMonthGraphView.getGraphViewStyle().setHorizontalLabelsColor(
+				Color.WHITE);
+		mMonthGraphView.getGraphViewStyle().setVerticalLabelsColor(Color.WHITE);
+		mMonthGraphView.getGraphViewStyle().setTextSize(12);
+		mMonthGraphView.setBackgroundColor(Color.parseColor("#66436EEE"));
+		mMonthGraphView.setDrawBackground(true);
+		mMonthTableLayout.addView(mMonthGraphView);
+
 	}
 
-	/**
-	 * 初始化表格2
-	 */
-	private void initTable2() {
+	private void initYearGraphView() {
+		mYearTableLayout = (LinearLayout) findViewById(R.id.table2);
+		String[] horizontalLabels = new String[7];
+		for (int i = 0; i < 7; i++) {
 
-		LinearLayout mLayout2 = (LinearLayout) findViewById(R.id.table2);
-		String[] horizontalLabels = new String[12];
-		for (int i = 0; i < 12; i++) {
-
-			horizontalLabels[i] = i + 1 + "月";
+			horizontalLabels[i] = i * 2 + "月";
 
 		}
-		mGraphView = new LineGraphView(this, "本年销售变化");
-		mGraphView.setHorizontalLabels(horizontalLabels);
+		mYearGraphView = new LineGraphView(this, "本年销售变化");
+		mYearGraphView.setHorizontalLabels(horizontalLabels);
+		mYearGraphView.getGraphViewStyle().setGridColor(Color.WHITE);
+		mYearGraphView.getGraphViewStyle()
+				.setHorizontalLabelsColor(Color.WHITE);
+		mYearGraphView.getGraphViewStyle().setVerticalLabelsColor(Color.WHITE);
+		mYearGraphView.getGraphViewStyle().setTextSize(12);
+		mYearGraphView.setBackgroundColor(Color.parseColor("#66436EEE"));
+		mYearGraphView.setDrawBackground(true);
+		mYearTableLayout.addView(mYearGraphView);
+	}
 
-		mGraphView.getGraphViewStyle().setGridColor(Color.WHITE);
-		mGraphView.getGraphViewStyle().setHorizontalLabelsColor(Color.WHITE);
-		mGraphView.getGraphViewStyle().setVerticalLabelsColor(Color.WHITE);
-		mGraphView.getGraphViewStyle().setTextSize(12);
-		mGraphView.getGraphViewStyle().setVerticalLabelsWidth(30);
-		mGraphView.setBackgroundColor(Color.parseColor("#66436EEE"));
-		mGraphView.setDrawBackground(true);
-		mGraphView.getGraphViewStyle().setLegendSpacing(10);
+	private void updataGraphViewsData() {
 
-		GraphViewData[] data2 = new GraphViewData[12];
-		data2[0] = new GraphViewData(0, 2);
-		data2[1] = new GraphViewData(1, 5);
-		data2[2] = new GraphViewData(2, 3);
-		data2[3] = new GraphViewData(3, 1);
-		data2[4] = new GraphViewData(4, 4);
-		for (int i = 5; i < 12; i++) {
-			data2[i] = new GraphViewData(i, i * 2);
+		String cityName = mData.get(mSelection).getCityName();
+
+		pieChartView.setTotalCount(pieHashMap.get(cityName).getTotalNum());
+		pieChartView.setSelledCount(pieHashMap.get(cityName).getSalesNum());
+		pieChartView.setYesterdayCount(pieHashMap.get(cityName)
+				.getYesterdaySale());
+
+		if (monthTableData.get(cityName) != null) {
+			setTableData(mMonthGraphView, monthTableData.get(cityName));
 		}
-		mGraphView.addSeries(new GraphViewSeries(data2));
-		mLayout2.addView(mGraphView);
+
+		if (yearTableData.get(cityName) != null) {
+			setTableData(mYearGraphView, yearTableData.get(cityName));
+		}
+
+	}
+
+	private void setTableData(GraphView graphView, ArrayList<Integer> tableData) {
+
+		GraphViewData[] data = new GraphViewData[7];
+
+		for (int i = 0; i < tableData.size(); i++) {
+			data[i] = new GraphViewData(i, tableData.get(i) * 1.0);
+		}
+
+		for (int i = 0; i < 7 - tableData.size(); i++) {
+
+			data[tableData.size() + i] = new GraphViewData(
+					tableData.size() + i, 0);
+
+		}
+
+		graphView.removeAllSeries();
+		graphView.addSeries(new GraphViewSeries(data));
 
 	}
 
@@ -427,6 +428,15 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 				itemViewHolder.openTimeTv.setText(building.getKpDate());
 
 				itemViewHolder.percentTv.setText(building.getRatio() + "%");
+				if (building.getIsNew() == 1) {
+					Drawable drawable = getResources().getDrawable(
+							R.drawable.ico06);
+					itemViewHolder.percentTv.setCompoundDrawables(null, null,
+							drawable, null);
+				} else {
+					itemViewHolder.percentTv.setCompoundDrawables(null, null,
+							null, null);
+				}
 
 				itemViewHolder.selledCountTv.setText(building.getSalesNum()
 						+ "");
@@ -504,7 +514,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 
 		} else {
 			Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-			// intent.putExtra(DETAIL_INFO, building);
+			intent.putExtra(DETAIL_INFO, building.getHousesID());
 			startActivity(intent);
 		}
 

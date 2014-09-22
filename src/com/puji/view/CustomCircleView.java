@@ -123,6 +123,7 @@ public class CustomCircleView extends View {
 
 	public void setYesterdayCount(int yesterdayCount) {
 		this.yesterdayCount = yesterdayCount;
+		invalidate();
 	}
 
 	public String getTotalTitle() {

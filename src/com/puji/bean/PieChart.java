@@ -1,6 +1,13 @@
 package com.puji.bean;
 
-public class PieChart {
+import java.io.Serializable;
+
+public class PieChart implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -962221271687115709L;
 
 	private int TotalNum;
 	private int SalesNum;

@@ -1,13 +1,19 @@
 package com.puji.bean;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class City {
+public class City implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1023874374119083821L;
 
 	private String cityName;
 	private String PinYin;
 	private ArrayList<Integer> year;
-	private ArrayList<Integer> month;
+	private ArrayList<Integer> moth;
 	private PieChart bing;
 	private ArrayList<House> houses;
 
@@ -43,12 +49,12 @@ public class City {
 		this.year = year;
 	}
 
-	public ArrayList<Integer> getMonth() {
-		return month;
+	public ArrayList<Integer> getMoth() {
+		return moth;
 	}
 
-	public void setMonth(ArrayList<Integer> month) {
-		this.month = month;
+	public void setMoth(ArrayList<Integer> moth) {
+		this.moth = moth;
 	}
 
 	public PieChart getBing() {
@@ -62,7 +68,7 @@ public class City {
 	@Override
 	public String toString() {
 		return "City [cityName=" + cityName + ", year=" + year + ", month="
-				+ month + ", bing=" + bing + "]";
+				+ moth + ", bing=" + bing + "]";
 	}
 
 }

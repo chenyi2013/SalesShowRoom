@@ -1,6 +1,13 @@
 package com.puji.bean;
 
-public class House {
+import java.io.Serializable;
+
+public class House implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4466627693254988919L;
 
 	private String Name;
 	private String TotalNum;

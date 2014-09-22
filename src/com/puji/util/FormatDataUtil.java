@@ -36,7 +36,7 @@ public class FormatDataUtil {
 			city = data.get(iterator.next());
 
 			yearTableData.put(city.getCityName(), city.getYear());
-			monthTableData.put(city.getCityName(), city.getMonth());
+			monthTableData.put(city.getCityName(), city.getMoth());
 			pieChartData.put(city.getCityName(), city.getBing());
 
 			houses.add(new House(city.getCityName(), city.getPinYin(), true));
