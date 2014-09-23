@@ -36,6 +36,7 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ico01"
                     android:drawablePadding="10dp"
+                    android:drawableStart="@drawable/ico01"
                     android:gravity="center"
                     android:padding="20dp"
                     android:textColor="#ffffff"
@@ -47,6 +48,7 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ico02"
                     android:drawablePadding="10dp"
+                    android:drawableStart="@drawable/ico02"
                     android:gravity="center"
                     android:padding="30dp"
                     android:textColor="#ffffff"
@@ -58,6 +60,7 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ico03"
                     android:drawablePadding="10dp"
+                    android:drawableStart="@drawable/ico03"
                     android:gravity="center"
                     android:padding="20dp"
                     android:textColor="#ffffff"
@@ -93,6 +96,7 @@
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ico05"
                     android:drawablePadding="5dp"
+                    android:drawableStart="@drawable/ico05"
                     android:textColor="#ffffff"
                     android:textSize="18sp" />
 
@@ -118,6 +122,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:contentDescription="@string/map_img"
             android:src="@drawable/map_guizhou" />
 
         <RelativeLayout
@@ -156,8 +161,10 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:paddingBottom="10dp"
+        android:paddingEnd="10dp"
         android:paddingLeft="40dp"
-        android:paddingRight="10dp" >
+        android:paddingRight="10dp"
+        android:paddingStart="40dp" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -170,13 +177,16 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
+                android:paddingEnd="10dp"
                 android:paddingLeft="30dp"
                 android:paddingRight="10dp"
+                android:paddingStart="30dp"
                 android:paddingTop="40dp" >
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/ranking"
                     android:src="@drawable/top1" >
                 </ImageView>
 
@@ -190,7 +200,6 @@
                         android:id="@+id/selled_info_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="叶嘉惠 62天前 售出了"
                         android:textColor="#ffffff"
                         android:textSize="18sp" />
 
@@ -198,7 +207,6 @@
                         android:id="@+id/selled_address_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="房号：丁香雅苑-06号地块-3幢-2401"
                         android:textColor="#ffffff"
                         android:textSize="18sp" />
 
@@ -206,7 +214,6 @@
                         android:id="@+id/selled_house_size_tv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="平米数：107.95平米"
                         android:textColor="#ffffff"
                         android:textSize="18sp" />
                 </LinearLayout>
@@ -216,34 +223,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:background="#0055ff"
-                android:orientation="horizontal" >
+                android:background="#B6A08C"
+                android:orientation="horizontal"
+                android:padding="5dp" >
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:gravity="center"
-                    android:text="姓名"
-                    android:textColor="#ffffff"
+                    android:text="@string/name"
+                    android:textColor="#351c0e"
                     android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:gravity="center"
-                    android:text="平米数"
-                    android:textColor="#ffffff"
+                    android:text="@string/house_size"
+                    android:textColor="#351c0e"
                     android:textSize="18sp" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="5"
                     android:gravity="center"
-                    android:text="时间"
-                    android:textColor="#ffffff"
+                    android:text="@string/date"
+                    android:textColor="#351c0e"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -252,8 +260,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp" >
+                android:layout_marginEnd="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginStart="20dp" >
             </ListView>
         </LinearLayout>
     </LinearLayout>

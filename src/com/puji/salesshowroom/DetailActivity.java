@@ -2,12 +2,14 @@ package com.puji.salesshowroom;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Html;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,12 +59,16 @@ public class DetailActivity extends Activity {
 	private LinearLayout mMonthTableLayout;
 	private LineGraphView mMonthGraphView;
 	private CustomCircleView mPieChartView;
+	private MyAdapter mAdapter;
 
 	private static final int SUCCESS = 1;
 	private int count = 0;
+	private int selection = 0;
 
+	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 
+		@SuppressLint("NewApi")
 		public void handleMessage(Message msg) {
 
 			switch (msg.what) {
@@ -72,13 +78,22 @@ public class DetailActivity extends Activity {
 					count = 0;
 				}
 
+				selection = count;
 				SalesListItem salesListItem = mSalesList.get(count);
-				mSelledInfoTv.setText(salesListItem.getSalesman()
-						+ salesListItem.getTime() + "天前 售出了");
-				mSelledAddressTv
-						.setText("房号：" + salesListItem.getHouseNumber());
-				mSelledHouseSizeTv.setText("平米数：" + salesListItem.getAcreage()
-						+ "平米");
+
+				mSelledInfoTv.setText(Html.fromHtml(String.format(
+						getString(R.string.man_at_time_selled_count),
+						salesListItem.getSalesman(), salesListItem.getTime())));
+
+				mSelledAddressTv.setText(String.format(
+						getString(R.string.house_number),
+						salesListItem.getHouseNumber()));
+
+				mSelledHouseSizeTv.setText(String.format(
+						getString(R.string.selled_house_size),
+						salesListItem.getAcreage()));
+
+				mAdapter.notifyDataSetChanged();
 
 				if (count == 0) {
 					mListView.smoothScrollToPositionFromTop(count++, 0, 0);
@@ -123,8 +138,9 @@ public class DetailActivity extends Activity {
 							mSalesList = details.getSalesList();
 
 							mCityNameTv.setText(detailsInfo.getName());
-							mOpenTimeTv.setText("开盘时间："
-									+ detailsInfo.getKpDate());
+							mOpenTimeTv.setText(String.format(
+									getString(R.string.open_time),
+									detailsInfo.getKpDate()));
 							mAddressTv.setText(detailsInfo.getAddress());
 							mPhoneNumberTv.setText(detailsInfo.getTel());
 
@@ -141,7 +157,7 @@ public class DetailActivity extends Activity {
 							mPieChartView.setYesterdayCount(details.getBing()
 									.getYesterdaySale());
 
-							mListView.setAdapter(new MyAdapter());
+							mListView.setAdapter(mAdapter = new MyAdapter());
 							mHandler.sendEmptyMessageDelayed(SUCCESS, 0);
 
 						}
@@ -201,11 +217,12 @@ public class DetailActivity extends Activity {
 
 	private void initMonthGraphView() {
 		mMonthTableLayout = (LinearLayout) findViewById(R.id.graph_layout);
-		mMonthGraphView = new LineGraphView(this, "本月销售变化");
+		mMonthGraphView = new LineGraphView(this,
+				getString(R.string.this_month_sales_change));
 		String[] horizontalLabels = new String[7];
 		for (int i = 0; i < 7; i++) {
 
-			horizontalLabels[i] = i * 5 + "日";
+			horizontalLabels[i] = i * 5 + getString(R.string.day);
 
 		}
 		mMonthGraphView.setHorizontalLabels(horizontalLabels);
@@ -250,19 +267,19 @@ public class DetailActivity extends Activity {
 
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
+
 			return mSalesList.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
+
 			return mSalesList.get(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
+
 			return position;
 		}
 
@@ -293,6 +310,22 @@ public class DetailActivity extends Activity {
 					+ salesListItem.getSalesman());
 			viewHolder.selledSizeTv.setText(salesListItem.getAcreage());
 			viewHolder.selledTimeTv.setText(salesListItem.getSalesTime());
+
+			if (selection == position) {
+				viewHolder.nameTv.setTextColor(Color.parseColor("#fc7101"));
+				viewHolder.selledSizeTv.setTextColor(Color
+						.parseColor("#fc7101"));
+				viewHolder.selledTimeTv.setTextColor(Color
+						.parseColor("#fc7101"));
+				convertView.setBackgroundColor(Color.parseColor("#3b3836"));
+			} else {
+				viewHolder.nameTv.setTextColor(Color.parseColor("#ffffff"));
+				viewHolder.selledSizeTv.setTextColor(Color
+						.parseColor("#ffffff"));
+				viewHolder.selledTimeTv.setTextColor(Color
+						.parseColor("#ffffff"));
+				convertView.setBackgroundColor(Color.parseColor("#00ffffff"));
+			}
 
 			return convertView;
 		}

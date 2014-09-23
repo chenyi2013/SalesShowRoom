@@ -21,14 +21,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg3"
+            android:drawableEnd="@drawable/ico06"
             android:drawableRight="@drawable/ico06"
             android:gravity="center"
             android:paddingBottom="10dp"
+            android:paddingEnd="0dp"
             android:paddingLeft="10dp"
             android:paddingRight="0dp"
             android:paddingStart="10dp"
             android:paddingTop="10dp"
-            android:text="10%"
             android:textColor="#ffffff" />
 
         <LinearLayout
@@ -51,7 +52,6 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="0dp"
                 android:paddingStart="10dp"
-                android:text="玫瑰庄园"
                 android:textColor="#ffffff"
                 android:textSize="18sp" />
 
@@ -63,7 +63,6 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="0dp"
                 android:paddingStart="10dp"
-                android:text="开盘时间：2014-8"
                 android:textColor="#ffffff" />
 
             <TextView
@@ -72,13 +71,13 @@
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ico01"
                 android:drawablePadding="10dp"
+                android:drawableStart="@drawable/ico01"
                 android:gravity="center_vertical"
                 android:paddingEnd="0dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="0dp"
                 android:paddingStart="10dp"
                 android:paddingTop="10dp"
-                android:text="1998"
                 android:textColor="#ffffff"
                 android:textSize="18sp" />
 
@@ -88,13 +87,13 @@
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ico02"
                 android:drawablePadding="10dp"
+                android:drawableStart="@drawable/ico02"
                 android:gravity="center_vertical"
                 android:paddingEnd="0dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="0dp"
                 android:paddingStart="10dp"
                 android:paddingTop="10dp"
-                android:text="1990"
                 android:textColor="#ffffff"
                 android:textSize="18sp" />
 
@@ -103,13 +102,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ico03"
+                android:drawableStart="@drawable/ico03"
                 android:drawablePadding="10dp"
                 android:paddingEnd="0dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="0dp"
                 android:paddingStart="10dp"
                 android:paddingTop="10dp"
-                android:text="45"
                 android:textColor="#ffffff"
                 android:textSize="18sp" />
         </LinearLayout>

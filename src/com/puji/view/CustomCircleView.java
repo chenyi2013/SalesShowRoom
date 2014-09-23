@@ -33,7 +33,7 @@ public class CustomCircleView extends View {
 
 	private int circularWidth = getPxValue(50);
 	private int smallCircleRadius = getPxValue(3);
-	private int indictorLineWeight = 1;//getPxValue(1);
+	private int indictorLineWeight = 1;// getPxValue(1);
 
 	private int titleFontSize = convertSpToPxValue(14);
 	private int countFontSize = convertSpToPxValue(12);
@@ -41,17 +41,17 @@ public class CustomCircleView extends View {
 	private int yesterdayTitleFontSize = convertSpToPxValue(14);
 	private int yesterdayCountFontSize = convertSpToPxValue(12);
 
-	private int totalCountTitleColor = Color.GREEN;
-	private int totalCountColor = Color.CYAN;
+	private int totalCountTitleColor = Color.parseColor("#a9c6de");
+	private int totalCountColor = Color.parseColor("#ffffff");
 
-	private int selledCountTitleColor = Color.GREEN;
-	private int selledCountColor = Color.CYAN;
+	private int selledCountTitleColor = Color.parseColor("#a9c6de");
+	private int selledCountColor = Color.parseColor("#ffffff");
 
-	private int yesterdayCountTitleColor = Color.RED;
-	private int yesterdayCountColor = Color.BLUE;
+	private int yesterdayCountTitleColor = Color.parseColor("#FB6F24");
+	private int yesterdayCountColor = Color.parseColor("#ffffff");
 
 	private int totalRingColor = Color.parseColor("#8C8C8C");
-	private int selledRingColor =  Color.parseColor("#FB6F24");
+	private int selledRingColor = Color.parseColor("#FB6F24");
 	private int yesterdayRingColor = Color.RED;
 
 	private int lineColor = Color.WHITE;

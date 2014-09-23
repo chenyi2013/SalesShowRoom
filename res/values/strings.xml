@@ -4,8 +4,23 @@
     <string name="app_name">SalesShowRoom</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="ranking">名次图标</string>
     <string name="sell_prograss">销售总进度</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_test">TestActivity</string>
+    <string name="name">姓名</string>
+    <string name="house_size">平米数</string>
+    <string name="date">时间</string>
+    <string name="map_img">地图</string>
+    <string name="icon">图标</string>
+    <string name="this_month_sales_change">本月销售变化</string>
+    <string name="the_sales_change_this_year">本年销售变化</string>
+    <string name="month">月</string>
+    <string name="day">日</string>
+    <string name="man_at_time_selled_count">"&lt;font color='#fc7101'>%1$s&lt;/font>&amp;nbsp;%2$d天前&amp;nbsp;售出了"</string>
+    <string name="house_number">房号：%1$s</string>
+    <string name="selled_house_size">平米数：%1$s平米</string>
+    <string name="open_time">开盘时间：%1$s</string>
+    <string name="ratio">%1$d%%</string>
 
 </resources>

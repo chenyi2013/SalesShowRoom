@@ -18,7 +18,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -210,11 +209,12 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 
 	private void initMonthGraphView() {
 		mMonthTableLayout = (LinearLayout) findViewById(R.id.table1);
-		mMonthGraphView = new LineGraphView(this, "本月销售变化");
+		mMonthGraphView = new LineGraphView(this,
+				getString(R.string.this_month_sales_change));
 		String[] horizontalLabels = new String[7];
 		for (int i = 0; i < 7; i++) {
 
-			horizontalLabels[i] = i * 5 + "日";
+			horizontalLabels[i] = i * 5 + getString(R.string.day);
 
 		}
 		mMonthGraphView.setHorizontalLabels(horizontalLabels);
@@ -234,10 +234,11 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 		String[] horizontalLabels = new String[7];
 		for (int i = 0; i < 7; i++) {
 
-			horizontalLabels[i] = i * 2 + "月";
+			horizontalLabels[i] = i * 2 + getString(R.string.month);
 
 		}
-		mYearGraphView = new LineGraphView(this, "本年销售变化");
+		mYearGraphView = new LineGraphView(this,
+				getString(R.string.the_sales_change_this_year));
 		mYearGraphView.setHorizontalLabels(horizontalLabels);
 		mYearGraphView.getGraphViewStyle().setGridColor(Color.WHITE);
 		mYearGraphView.getGraphViewStyle()
@@ -421,13 +422,13 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 				LinearLayout.LayoutParams layoutParams = (LayoutParams) itemViewHolder.layout
 						.getLayoutParams();
 				layoutParams.height = height;
-
+				
 				itemViewHolder.layout.setLayoutParams(layoutParams);
-
 				itemViewHolder.buildingNameTv.setText(building.getName());
-				itemViewHolder.openTimeTv.setText(building.getKpDate());
-
-				itemViewHolder.percentTv.setText(building.getRatio() + "%");
+				itemViewHolder.openTimeTv.setText(String.format(
+						getString(R.string.open_time), building.getKpDate()));
+				itemViewHolder.percentTv.setText(String.format(
+						getString(R.string.ratio), building.getRatio()));
 				if (building.getIsNew() == 1) {
 					Drawable drawable = getResources().getDrawable(
 							R.drawable.ico06);
