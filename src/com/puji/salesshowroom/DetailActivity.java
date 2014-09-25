@@ -14,6 +14,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -55,11 +56,16 @@ public class DetailActivity extends Activity {
 	private TextView mSelledAddressTv;
 	private TextView mSelledHouseSizeTv;
 
+	private ImageView mRankingImg;
+
 	ArrayList<SalesListItem> mSalesList;
 	private LinearLayout mMonthTableLayout;
 	private LineGraphView mMonthGraphView;
 	private CustomCircleView mPieChartView;
 	private MyAdapter mAdapter;
+
+	private int mRankings[] = { R.drawable.top1, R.drawable.top2,
+			R.drawable.top3, R.drawable.top4, R.drawable.top5 };
 
 	private static final int SUCCESS = 1;
 	private int count = 0;
@@ -92,6 +98,7 @@ public class DetailActivity extends Activity {
 				mSelledHouseSizeTv.setText(String.format(
 						getString(R.string.selled_house_size),
 						salesListItem.getAcreage()));
+				mRankingImg.setImageResource(mRankings[count % 5]);
 
 				mAdapter.notifyDataSetChanged();
 
@@ -209,6 +216,8 @@ public class DetailActivity extends Activity {
 		mSelledInfoTv = (TextView) findViewById(R.id.selled_info_tv);
 		mSelledHouseSizeTv = (TextView) findViewById(R.id.selled_house_size_tv);
 		mSelledAddressTv = (TextView) findViewById(R.id.selled_address_tv);
+
+		mRankingImg = (ImageView) findViewById(R.id.ranking);
 
 		mListView = (ListView) findViewById(R.id.performance_list_view);
 		mPieChartView = (CustomCircleView) findViewById(R.id.ping_graph_view);
