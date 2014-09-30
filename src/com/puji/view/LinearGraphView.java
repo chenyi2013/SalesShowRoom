@@ -350,6 +350,7 @@ public class LinearGraphView extends View {
 	 */
 	public void setVertialLabelCount(int mVertialLabelCount) {
 		this.mVertialLabelCount = mVertialLabelCount;
+		invalidate();
 	}
 
 	/**
