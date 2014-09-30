@@ -14,6 +14,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,10 +33,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphView.GraphViewData;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
+
 import com.puji.bean.House;
 import com.puji.bean.PieChart;
 import com.puji.config.Config;
@@ -43,6 +41,8 @@ import com.puji.util.DisplayUtils;
 import com.puji.util.FormatDataUtil;
 import com.puji.util.JsonUtils;
 import com.puji.view.CustomCircleView;
+import com.puji.view.LinearGraphView;
+import com.puji.view.LinearGraphView.GraphViewData;
 
 /**
  * 
@@ -103,12 +103,9 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 	/**
 	 * œﬂ–‘Õº
 	 */
-	private LineGraphView mMonthGraphView;
-	private LineGraphView mYearGraphView;
+	private LinearGraphView mMonthGraphView;
+	private LinearGraphView mYearGraphView;
 	private DisplayUtils mDisplayUtils;
-	private LinearLayout mMonthTableLayout;
-	private LinearLayout mYearTableLayout;
-
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -190,6 +187,9 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 
 		pieChartView = (CustomCircleView) findViewById(R.id.pie_chart);
 
+		mMonthGraphView = (LinearGraphView) findViewById(R.id.month_sale_talbe);
+		mYearGraphView = (LinearGraphView) findViewById(R.id.year_sale_talbe);
+
 		mHListView = (HListView) findViewById(R.id.horizontal_list_view);
 		mHListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		mHListView.setSelected(true);
@@ -208,46 +208,53 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 	}
 
 	private void initMonthGraphView() {
-		mMonthTableLayout = (LinearLayout) findViewById(R.id.table1);
-		mMonthGraphView = new LineGraphView(this,
-				getString(R.string.this_month_sales_change));
+
 		String[] horizontalLabels = new String[7];
 		for (int i = 0; i < 7; i++) {
 
 			horizontalLabels[i] = i * 5 + getString(R.string.day);
 
 		}
-		mMonthGraphView.setHorizontalLabels(horizontalLabels);
-		mMonthGraphView.getGraphViewStyle().setGridColor(Color.WHITE);
-		mMonthGraphView.getGraphViewStyle().setHorizontalLabelsColor(
-				Color.WHITE);
-		mMonthGraphView.getGraphViewStyle().setVerticalLabelsColor(Color.WHITE);
-		mMonthGraphView.getGraphViewStyle().setTextSize(12);
-		mMonthGraphView.setBackgroundColor(Color.parseColor("#66436EEE"));
+
+		mMonthGraphView
+				.setGraphTitle(getString(R.string.this_month_sales_change));
+		mMonthGraphView.setGraphTitleColor(Color.WHITE);
+		mMonthGraphView.setHorizontalLabelCount(horizontalLabels.length);
+		mMonthGraphView.setHorizontalLables(horizontalLabels);
+		mMonthGraphView.setGraphBackgroundColor(Color.parseColor("#66436EEE"));
+		mMonthGraphView.setGridColor(0xffffffff);
+		mMonthGraphView.setHorizontalLabelAlign(Paint.Align.CENTER);
+		mMonthGraphView.setHorizontalLableColor(Color.WHITE);
+		mMonthGraphView.setLineColor(Color.parseColor("#436EEE"));
+		mMonthGraphView.setVertialLabelColor(Color.WHITE);
+		mMonthGraphView.setPointColor(Color.parseColor("#436EEE"));
 		mMonthGraphView.setDrawBackground(true);
-		mMonthTableLayout.addView(mMonthGraphView);
 
 	}
 
 	private void initYearGraphView() {
-		mYearTableLayout = (LinearLayout) findViewById(R.id.table2);
+
 		String[] horizontalLabels = new String[7];
 		for (int i = 0; i < 7; i++) {
 
 			horizontalLabels[i] = i * 2 + getString(R.string.month);
 
 		}
-		mYearGraphView = new LineGraphView(this,
-				getString(R.string.the_sales_change_this_year));
-		mYearGraphView.setHorizontalLabels(horizontalLabels);
-		mYearGraphView.getGraphViewStyle().setGridColor(Color.WHITE);
-		mYearGraphView.getGraphViewStyle()
-				.setHorizontalLabelsColor(Color.WHITE);
-		mYearGraphView.getGraphViewStyle().setVerticalLabelsColor(Color.WHITE);
-		mYearGraphView.getGraphViewStyle().setTextSize(12);
-		mYearGraphView.setBackgroundColor(Color.parseColor("#66436EEE"));
+
+		mYearGraphView
+				.setGraphTitle(getString(R.string.the_sales_change_this_year));
+		mYearGraphView.setGraphTitleColor(Color.WHITE);
+		mYearGraphView.setHorizontalLabelCount(horizontalLabels.length);
+		mYearGraphView.setHorizontalLables(horizontalLabels);
+		mYearGraphView.setGraphBackgroundColor(Color.parseColor("#66436EEE"));
+		mYearGraphView.setGridColor(0xffffffff);
+		mYearGraphView.setHorizontalLabelAlign(Paint.Align.CENTER);
+		mYearGraphView.setHorizontalLableColor(Color.WHITE);
+		mYearGraphView.setLineColor(Color.parseColor("#436EEE"));
+		mYearGraphView.setVertialLabelColor(Color.WHITE);
+		mYearGraphView.setPointColor(Color.parseColor("#436EEE"));
 		mYearGraphView.setDrawBackground(true);
-		mYearTableLayout.addView(mYearGraphView);
+
 	}
 
 	private void updataGraphViewsData() {
@@ -269,23 +276,16 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 
 	}
 
-	private void setTableData(GraphView graphView, ArrayList<Integer> tableData) {
+	private void setTableData(LinearGraphView graphView,
+			ArrayList<Integer> tableData) {
 
-		GraphViewData[] data = new GraphViewData[7];
+		GraphViewData[] data = new GraphViewData[tableData.size()];
 
 		for (int i = 0; i < tableData.size(); i++) {
 			data[i] = new GraphViewData(i, tableData.get(i) * 1.0);
 		}
 
-		for (int i = 0; i < 7 - tableData.size(); i++) {
-
-			data[tableData.size() + i] = new GraphViewData(
-					tableData.size() + i, 0);
-
-		}
-
-		graphView.removeAllSeries();
-		graphView.addSeries(new GraphViewSeries(data));
+		graphView.setData(data);
 
 	}
 
@@ -422,7 +422,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener,
 				LinearLayout.LayoutParams layoutParams = (LayoutParams) itemViewHolder.layout
 						.getLayoutParams();
 				layoutParams.height = height;
-				
+
 				itemViewHolder.layout.setLayoutParams(layoutParams);
 				itemViewHolder.buildingNameTv.setText(building.getName());
 				itemViewHolder.openTimeTv.setText(String.format(

@@ -73,6 +73,14 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:padding="10dp" >
+
+            <com.puji.view.LinearGraphView
+                android:id="@+id/month_sale_talbe"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -82,6 +90,14 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:padding="10dp" >
+
+            <com.puji.view.LinearGraphView
+                android:id="@+id/year_sale_talbe"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="0dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp" />
         </LinearLayout>
     </LinearLayout>
 

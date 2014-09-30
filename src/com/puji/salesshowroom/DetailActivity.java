@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,10 +26,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphView.GraphViewData;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
 import com.puji.bean.HouseDetails;
 import com.puji.bean.HouseDetailsInfo;
 import com.puji.bean.SalesListItem;
@@ -36,6 +33,8 @@ import com.puji.config.Config;
 import com.puji.util.DisplayUtils;
 import com.puji.util.JsonUtils;
 import com.puji.view.CustomCircleView;
+import com.puji.view.LinearGraphView;
+import com.puji.view.LinearGraphView.GraphViewData;
 
 public class DetailActivity extends Activity {
 
@@ -59,8 +58,7 @@ public class DetailActivity extends Activity {
 	private ImageView mRankingImg;
 
 	ArrayList<SalesListItem> mSalesList;
-	private LinearLayout mMonthTableLayout;
-	private LineGraphView mMonthGraphView;
+	private LinearGraphView mMonthGraphView;
 	private CustomCircleView mPieChartView;
 	private MyAdapter mAdapter;
 
@@ -221,48 +219,44 @@ public class DetailActivity extends Activity {
 
 		mListView = (ListView) findViewById(R.id.performance_list_view);
 		mPieChartView = (CustomCircleView) findViewById(R.id.ping_graph_view);
+		mMonthGraphView = (LinearGraphView) findViewById(R.id.month_sale_talbe);
 		initMonthGraphView();
 	}
 
 	private void initMonthGraphView() {
-		mMonthTableLayout = (LinearLayout) findViewById(R.id.graph_layout);
-		mMonthGraphView = new LineGraphView(this,
-				getString(R.string.this_month_sales_change));
+
 		String[] horizontalLabels = new String[7];
 		for (int i = 0; i < 7; i++) {
 
 			horizontalLabels[i] = i * 5 + getString(R.string.day);
 
 		}
-		mMonthGraphView.setHorizontalLabels(horizontalLabels);
-		mMonthGraphView.getGraphViewStyle().setGridColor(Color.WHITE);
-		mMonthGraphView.getGraphViewStyle().setHorizontalLabelsColor(
-				Color.WHITE);
-		mMonthGraphView.getGraphViewStyle().setVerticalLabelsColor(Color.WHITE);
-		mMonthGraphView.getGraphViewStyle().setTextSize(12);
-		mMonthGraphView.setBackgroundColor(Color.parseColor("#66436EEE"));
+		mMonthGraphView
+				.setGraphTitle(getString(R.string.this_month_sales_change));
+		mMonthGraphView.setGraphTitleColor(Color.WHITE);
+		mMonthGraphView.setHorizontalLabelCount(horizontalLabels.length);
+		mMonthGraphView.setHorizontalLables(horizontalLabels);
+		mMonthGraphView.setGraphBackgroundColor(Color.parseColor("#66436EEE"));
+		mMonthGraphView.setGridColor(0xffffffff);
+		mMonthGraphView.setHorizontalLabelAlign(Paint.Align.CENTER);
+		mMonthGraphView.setHorizontalLableColor(Color.WHITE);
+		mMonthGraphView.setLineColor(Color.parseColor("#436EEE"));
+		mMonthGraphView.setVertialLabelColor(Color.WHITE);
+		mMonthGraphView.setPointColor(Color.parseColor("#436EEE"));
 		mMonthGraphView.setDrawBackground(true);
-		mMonthTableLayout.addView(mMonthGraphView);
 
 	}
 
-	private void setTableData(GraphView graphView, ArrayList<Integer> tableData) {
+	private void setTableData(LinearGraphView graphView,
+			ArrayList<Integer> tableData) {
 
-		GraphViewData[] data = new GraphViewData[7];
+		GraphViewData[] data = new GraphViewData[tableData.size()];
 
 		for (int i = 0; i < tableData.size(); i++) {
 			data[i] = new GraphViewData(i, tableData.get(i) * 1.0);
 		}
 
-		for (int i = 0; i < 7 - tableData.size(); i++) {
-
-			data[tableData.size() + i] = new GraphViewData(
-					tableData.size() + i, 0);
-
-		}
-
-		graphView.removeAllSeries();
-		graphView.addSeries(new GraphViewSeries(data));
+		graphView.setData(data);
 
 	}
 
